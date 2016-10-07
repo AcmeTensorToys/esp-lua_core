@@ -1,0 +1,68 @@
+#!/usr/bin/env expect
+
+# expect wrapper around nc to push a file via telnetd-file.lua's interface;
+# invoke with "host port remote_file_name local_file_name [compile]"
+
+package require Tcl 8
+package require base64 "2.4.2"
+
+proc docmd {sid cmd} {
+  set timeout 5
+
+  send -i ${sid} ${cmd}
+  expect {
+    -i ${sid} -ex "\n$ " {}
+    -i ${sid} -ex "ERR: " {
+      send_user "Command error\n"
+      exit 1
+    }
+    -i ${sid} eof {
+      send_user "Command EOF\n"
+      exit 1
+    }
+    timeout {
+      send_user "Command timeout\n"
+      exit 1
+    }
+  }
+
+}
+
+spawn {*}"nc [lindex $argv 0] [lindex $argv 1]"
+set remote_sid ${spawn_id}
+
+set rfn [lindex $argv 2]
+set lfn [lindex $argv 3]
+set lchan [open ${lfn} r+]
+fconfigure ${lchan} -translation binary -encoding binary
+
+set timeout 2
+expect {
+  -i ${remote_sid} -ex "\n$ " {}
+  timeout {
+    send_user "Failed to find initial prompt"
+    exit 1
+  }
+}
+
+docmd ${remote_sid} "file remove ${rfn}\n"
+
+set pos 0
+while 1 {
+  set chunk [read ${lchan} 128]
+  set length [string length ${chunk}]
+  if {${length} <= 0} { break }
+
+  set echunk [::base64::encode -maxlen 0 ${chunk}]
+  docmd ${remote_sid} "file pwrite ${pos} ${rfn} ${echunk}\n"
+
+  set pos [expr {$pos + $length}]
+}
+
+if { "compile" == [lindex $argv 4] } {
+  docmd ${remote_sid} "file compile ${rfn}\n"
+  docmd ${remote_sid} "file remove ${rfn}\n"
+}
+
+send -i ${remote_sid} "quit\n"
+expect { -i ${remote_sid} eof {} }
