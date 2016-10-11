@@ -1,17 +1,7 @@
 #!/bin/bash
 set -e -u
 
-if [ -z ${HOST:-} ]; then
-  # Uses LUATOOL to push init and dependencies to the device; bootstrap!
-  PUSHCMD="${LUATOOL} --delay 0.1 -p ${MCUPORT} -b ${MCUBAUD}"
-  dopush() { ${PUSHCMD} -f $1 -t ${2:-`basename $1`}; }
-  dopushcompile() { ${PUSHCMD} -f $1 -t ${2:-`basename $1`} -c; }
-else
-  # Uses host/pushvia to push everything if HOST is set
-  PUSHCMD="./host/pushvia.expect ${HOST} ${PORT:-23}"
-  dopush() { ${PUSHCMD} ${2:-`basename $1`} $1; }
-  dopushcompile() { ${PUSHCMD} ${2:-`basename $1`} $1 compile; }
-fi
+. ./host/pushcommon.sh
 
 dopushcompile util/diag.lua
 dopushcompile tq/tq.lua
