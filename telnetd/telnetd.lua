@@ -24,11 +24,11 @@ function self.rx(tx,input,k)
   k(true)
 end
 function self.server(sock_)
-  local sock = (dofile("fifosock.lc")).wrap(sock_)
+  local sock = (dofile("fifosock.lc"))((require "fifo")(), sock_)
   local dosend = function(...) sock:send(...) end
   local k = function(c) if c then sock:send("\n$ ") else sock:close() end end
   sock:on("receive",function(s_,input) self.rx(dosend,input,k) end)
-  sock:on("disconnection",function(s_) tryon("disconn",sock); sock.fini(); sock=nil end)
+  sock:on("disconnection",function(s_) tryon("disconn",sock) ; sock:fini() end)
   tryon("conn",sock)
   sock:send("\n$ ")
 end
