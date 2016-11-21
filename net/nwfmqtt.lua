@@ -2,7 +2,7 @@
 local nwfnet = require "nwfnet"
 local self = {}
 function self.mkclient(cf) -- construct a client with config from json file cf
-  local c, k, u, p
+  local c, k, u, p, l
   if file.open(cf) then
     local conf = cjson.decode(file.read())
     if type(conf) == "table" then
