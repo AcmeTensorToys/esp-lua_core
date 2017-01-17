@@ -2,7 +2,7 @@ local function dosntp(server)
   local nn = require "nwfnet"
   if not server then
     if file.open("nwfnet.conf2","r") then
-      local conf = cjson.decode(file.read())
+      local conf = cjson.decode(file.read() or "")
       if type(conf) == "table" then
         if conf["sntp"]   then print("Setting SNTP server"); server = conf["sntp"] end
        else print("nwfnet.conf2 malformed")
