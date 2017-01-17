@@ -36,6 +36,7 @@ function self.connect(m,cf) -- make a connection with parameters from json file 
   secure = (secure == 1) or 0
   return m:connect(broker,port,secure,0)
 end
+-- XXX deprecated in favor of new upstream cron module
 function self.heartbeat(m,topic,tq,period) -- set up lw&t and periodically heartbeat using tq until cancelled
   m:lwt(topic,"dead",1,1)
   local handle
