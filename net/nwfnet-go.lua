@@ -1,7 +1,7 @@
 -- DEPENDS: cjson, file, mdns, net, rtctime, sntp, wifi; nwfnet, nwfnet-sntp
 wifi.eventmon.register(wifi.eventmon.STA_GOT_IP, function(t)
   (require "nwfnet"):runnet("wstagoip",t)
-  mdns.register(wifi.sta.gethostname())
+  if mdns then mdns.register(wifi.sta.gethostname()) end
   dofile("nwfnet-sntp.lc").dosntp(nil)
 end)
 wifi.eventmon.register(wifi.eventmon.STA_DHCP_TIMEOUT, function(_) (require "nwfnet"):runnet("wstadtmo") end)
