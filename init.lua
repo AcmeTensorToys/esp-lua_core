@@ -32,7 +32,5 @@ local function bootPANIC()
   goab()
 end
 local bct = { [0] = waitFLASH, [1] = bootPANIC, [2] = bootPANIC, [3] = bootPANIC, [4] = waitFLASH, [5] = goi2, [6] = waitFLASH }
-local mt = {__index = function() return goi2 end}
-setmetatable(bct,mt)
 local _, bc = node.bootreason()
-bct[bc]()
+if bct[bc] then bct[bc]() else waitFLASH() end
