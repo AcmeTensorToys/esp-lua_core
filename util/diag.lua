@@ -17,4 +17,5 @@ end
 if file then
   print('FS:', file.fsinfo()); for k,v in pairs(file.list()) do print("",k,v) end
 end
+print('PACKAGES:'); for k,v in pairs(package.loaded) do print("",k,v) end
 print('GLOBAL:'); for k,v in pairs(_G) do print("",k,v) end
