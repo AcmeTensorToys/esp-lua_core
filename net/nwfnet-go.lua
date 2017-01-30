@@ -25,7 +25,7 @@ if file.open("nwfnet.conf","r") then
     else                               wifi.setmode(wifi.STATION)
     end
 
-    print("Applied settings from nwfnet.conf; likely, you want to remove this file...")
+    if not conf["keepfile"] then file.remove("nwfnet.conf") end
    else print("nwfnet.conf malformed")
   end
   file.close()
