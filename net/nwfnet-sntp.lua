@@ -2,11 +2,13 @@ local function dosntp(server)
   local nn = require "nwfnet"
   if not server then
     if file.open("nwfnet.conf2","r") then
-      local conf = cjson.decode(file.read())
+      local conf = cjson.decode(file.read() or "")
       if type(conf) == "table" then
-        if conf["sntp"]   then print("Setting SNTP server"); server = conf["sntp"] end
+        if conf["sntp"]  then server = conf["sntp"] end
        else print("nwfnet.conf2 malformed")
   end end end
+  -- XXX Soon, in upstream, the NTP module will default to a ntp pool;
+  -- we should just let that happen here, when that happens!
   local x, y
   if not server then x, y, server = wifi.ap.getip() end
   if not server then x, y, server = wifi.sta.getip() end
@@ -17,6 +19,7 @@ local function dosntp(server)
   )
 end
 
+-- XXX deprecated in favor of new cron upstream module
 local function loopsntp(tq,period,server)
   local function f() dosntp(server); tq:queue(period,f) end
   tq:queue(period,f)

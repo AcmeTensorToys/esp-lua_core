@@ -4,7 +4,7 @@ local self = {}
 function self.mkclient(cf) -- construct a client with config from json file cf
   local c, k, u, p, l
   if file.open(cf) then
-    local conf = cjson.decode(file.read())
+    local conf = cjson.decode(file.read() or "")
     if type(conf) == "table" then
       c = conf["clientid"]; k = conf["keepalive"]; u = conf["user"]; p = conf["pass"]; l = conf["clean"]
     end
@@ -24,7 +24,7 @@ end
 function self.connect(m,cf) -- make a connection with parameters from json file cf
   local broker, port, secure
   if file.open(cf) then
-    local conf = cjson.decode(file.read())
+    local conf = cjson.decode(file.read() or "")
     if type(conf) == "table" then
       broker = conf["broker"]; port = conf["port"]; secure = conf["secure"]
     end
@@ -36,6 +36,7 @@ function self.connect(m,cf) -- make a connection with parameters from json file 
   secure = (secure == 1) or 0
   return m:connect(broker,port,secure,0)
 end
+-- XXX deprecated in favor of new upstream cron module
 function self.heartbeat(m,topic,tq,period) -- set up lw&t and periodically heartbeat using tq until cancelled
   m:lwt(topic,"dead",1,1)
   local handle
