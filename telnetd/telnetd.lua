@@ -19,17 +19,23 @@ function self.rx(tx,input,k)
        if rt ~= nil
         then self.tryin(r,rt(),function(c2) tx(c.." "..c2.."?") end, function() tx(c.." ??") end,tx)
         else tx(c.."?")
-    end end end,
-    function(_) tx("?") end,tx)
-  k(true)
+       end
+       k(true)
+      end
+    end,
+    function(_) tx("?") k(true) end,tx)
 end
 function self.server(sock_)
-  local sock = (dofile("fifosock.lc"))((require "fifo")(), sock_)
-  local dosend = function(...) sock:send(...) end
-  local k = function(c) if c then sock:send("\n$ ") else sock:close() end end
-  sock:on("receive",function(s_,input) self.rx(dosend,input,k) end)
-  sock:on("disconnection",function(s_) tryon("disconn",sock) ; sock:fini() end)
-  tryon("conn",sock)
-  sock:send("\n$ ")
+  local fsend = (dofile("fifosock.lc"))((require "fifo")(), sock_)
+  local function teardown(rawsock)
+    rawsock:on("sent", nil)
+    rawsock:on("receive", nil)
+    rawsock:on("disconnection", nil)
+    tryon("disconn",fsend)
+  end
+  sock_:on("receive",function(s_,input) self.rx(fsend,input,function(c) if c then fsend("\n$ ") else s_:close() teardown(s_) end end) end)
+  sock_:on("disconnection",function(s_, x) teardown(s_) end)
+  tryon("conn",fsend)
+  fsend("\n$ ")
 end
 return self

@@ -12,11 +12,12 @@ local function goab()
     dofile("diag.lc")
     dofile("nwfnet-go.lc")
     tcpserv = net.createServer(net.TCP, 180)
-        tcpserv:listen(23,function(k)
+    tcpserv:listen(23,function(k)
           local telnetd = dofile "telnetd.lc"
-      telnetd.on["conn"] = function(k)
-            tmr.unregister(6)
-            k:send(string.format("NODE-%06X RECOVERY (auto reboot cancelled)",node.chipid())) end
+          telnetd.on["conn"] = function(s)
+              tmr.unregister(6)
+              s(string.format("NODE-%06X RECOVERY (auto reboot cancelled)",node.chipid()))
+          end
           telnetd.server(k)
         end)
 end
