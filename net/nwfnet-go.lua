@@ -1,4 +1,4 @@
--- DEPENDS: cjson, file, mdns, net, rtctime, sntp, wifi; nwfnet, nwfnet-sntp
+-- DEPENDS: file, mdns, net, rtctime, sjson, sntp, wifi; nwfnet, nwfnet-sntp
 wifi.eventmon.register(wifi.eventmon.STA_GOT_IP, function(t)
   (require "nwfnet"):runnet("wstagoip",t)
   if mdns then mdns.register(wifi.sta.gethostname()) end
@@ -11,7 +11,7 @@ wifi.eventmon.register(wifi.eventmon.STA_DISCONNECTED, function(t) (require "nwf
 -- One-shot configuration options; useful to change many things at once
 -- at the next boot; all of these options are persisted by the ESP
 if file.open("nwfnet.conf","r") then
-  local conf = cjson.decode(file.read() or "")
+  local conf = sjson.decode(file.read() or "")
   if type(conf) == "table" then
     local essid = conf["sta_essid"]; local pw = conf["sta_pw"]
     if essid ~= nil and pw ~= nil then wifi.sta.config(essid,pw,0) end
@@ -47,7 +47,7 @@ if file.open("nwfnet.cert","r") then
 end
 
 if file.open("nwfnet.conf2","r") then
-  local conf = cjson.decode(file.read() or "")
+  local conf = sjson.decode(file.read() or "")
   if type(conf) == "table" then
     if conf["verify"] == 1 then print("Enabling certificate verification"); pcall(net.cert.verify,true) end
    else print("nwfnet.conf2 malformed")

@@ -1,10 +1,10 @@
--- DEPENDS: cjson, file, mqtt; nwfnet
+-- DEPENDS: file, mqtt, sjson; nwfnet
 local nwfnet = require "nwfnet"
 local self = {}
 function self.mkclient(cf) -- construct a client with config from json file cf
   local c, k, u, p, l
   if file.open(cf) then
-    local conf = cjson.decode(file.read() or "")
+    local conf = sjson.decode(file.read() or "")
     if type(conf) == "table" then
       c = conf["clientid"]; k = conf["keepalive"]; u = conf["user"]; p = conf["pass"]; l = conf["clean"]
     end
@@ -24,7 +24,7 @@ end
 function self.connect(m,cf) -- make a connection with parameters from json file cf
   local broker, port, secure
   if file.open(cf) then
-    local conf = cjson.decode(file.read() or "")
+    local conf = sjson.decode(file.read() or "")
     if type(conf) == "table" then
       broker = conf["broker"]; port = conf["port"]; secure = conf["secure"]
     end

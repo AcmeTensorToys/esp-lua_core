@@ -1,9 +1,6 @@
 -- DEPEND: file?, gpio, node, rtctime?, tmr ; nwfnet, nwfnet-diag, nwfnet-go, telnetd
 if rtctime then rtctime.set(0) end -- set time to 0 until someone corrects us
 
--- XXX much of this framework calls cjson as such; that should be fixed
-if not cjson then _G.cjson = sjson end
-
 -- See if there's any early startup to do.
 if file and file.exists("init-early.lua") then dofile("init-early.lua") end
 
