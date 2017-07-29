@@ -1,3 +1,7 @@
 [submodule "_external/dvv-nodemcu-thingies"]
 	path = _external/dvv-nodemcu-thingies
 	url = https://github.com/dvv/nodemcu-thingies.git
+[submodule "_external/luasrcdiet"]
+	path = _external/luasrcdiet
+	url = https://github.com/jirutka/luasrcdiet.git
+	branch = master
