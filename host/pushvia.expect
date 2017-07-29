@@ -7,7 +7,7 @@ package require Tcl 8
 package require base64 "2.4.2"
 
 proc docmd {sid cmd} {
-  set timeout 5
+  set timeout 15
 
   send -i ${sid} ${cmd}
   expect {
