@@ -12,13 +12,13 @@ dopushcompile net/nwfnet.lua
 dopushcompile net/nwfnet-sntp.lua
 dopushcompile net/nwfnet-go.lua
 dopushcompile net/nwfnet-diag.lua
-#dopush        net/conf/nwfnet.conf
-#dopush        net/conf/nwfnet.cert
-#dopush        net/conf/nwfnet.conf2
+#dopushtext   net/conf/nwfnet.conf
+#dopushtext   net/conf/nwfnet.cert
+#dopushtext   net/conf/nwfnet.conf2
 dopushcompile net/fifosock.lua
 dopushcompile telnetd/telnetd.lua
 dopushcompile telnetd/telnetd-file.lua
 dopushcompile telnetd/telnetd-diag.lua
-dopush        init.lua
+dopushlua     init.lua
 
 echo "SUCCESS"

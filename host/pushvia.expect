@@ -33,7 +33,7 @@ set remote_sid ${spawn_id}
 
 set rfn [lindex $argv 2]
 set lfn [lindex $argv 3]
-set lchan [open ${lfn} r+]
+set lchan [open ${lfn} r]
 fconfigure ${lchan} -translation binary -encoding binary
 
 set timeout 2
