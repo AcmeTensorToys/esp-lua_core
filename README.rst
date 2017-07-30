@@ -32,7 +32,7 @@ Generic Utilities
 * ``host/pushinit.sh`` -- a host-side utility to push a minimum set of files
   up to the device, either via `luatool
   <https://github.com/4refr0nt/luatool>`_ or via an existing telnet server
-  with file overlay (see below).
+  with file overlay (see below).  See the readme in ``host/`` for more.
 
 Timer Queue
 -----------
@@ -84,13 +84,7 @@ Telnet Server
 -------------
 
 * ``telnetd/telnetd.lua`` -- the main telnet server.  Use as
-  ``tcpserv:listen(23,telnetd.server)``.
-
-* ``telnetd/telnetd-diag.lua`` -- overlay for interpreting "diag" commands;
-  automatically run by ``telnetd``.
-
-* ``telnetd/telnetd-file.lua`` -- overlay for interpreting "file" commands;
-  automatically run by ``telnetd``.
+  ``tcpserv:listen(23,telnetd.server)``.  See the readme in its directory.
 
 cap1188 driver
 --------------
