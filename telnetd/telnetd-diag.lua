@@ -6,6 +6,10 @@ return {
   ["fifo"] = function(_,s) if rtcfifo and rtcfifo.ready() ~= 0 then s(string.format("fifo=%d",rtcfifo.count())) else s("no rtcfifo") end end,
   ["exec"] = function(l,s)
 	local f, err = loadstring(l)
-	if f then local ok, res = pcall(f); if ok == true then s("ok: "..tostring(res)) else s("pcall err: "..res) end
-         else s("err: "..err) end end
+	if f
+     then getfenv(f).send = function(x) s(tostring(x)) end
+          local ok, res = pcall(f); if ok then s("ok: "..tostring(res)) else s("pcall err: "..res) end
+     else s("err: "..err)
+    end
+   end
 }
