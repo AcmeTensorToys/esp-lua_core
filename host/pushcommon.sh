@@ -26,7 +26,7 @@ if [ -z "${MCUHOST:-}" ]; then
   dopushlua()     { luafile ${1} ; ${=PUSHCMD} -f ${LUAFILE} -t ${2:-`basename $1`}    ; }
   dopushcompile() { luafile ${1} ; ${=PUSHCMD} -f ${LUAFILE} -t ${2:-`basename $1`} -c ; }
 else
-  PUSHCMD="./host/pushvia.expect ${MCUHOST} ${PORT:-23}"
+  PUSHCMD="`dirname $0`/pushvia.expect ${MCUHOST} ${PORT:-23}"
   dopushtext()    {                ${=PUSHCMD} ${2:-`basename $1`} $1                 ; }
   dopushlua()     { luafile ${1} ; ${=PUSHCMD} ${2:-`basename $1`} ${LUAFILE}         ; }
   dopushcompile() { luafile ${1} ; ${=PUSHCMD} ${2:-`basename $1`} ${LUAFILE} compile ; }
