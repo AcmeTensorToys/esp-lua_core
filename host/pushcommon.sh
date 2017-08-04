@@ -1,16 +1,24 @@
+: ${TOPDIR:=`dirname $0`/../}
+
 luafile () {
   if [ -z "${LUADIET:-}" ]; then
     echo "No diet for lua" >&2
     LUAFILE=$1
   else
     DF=$(mktemp -p /tmp esp-pushcommon-XXXXX)
+	: ${LUASRCDIET:=${TOPDIR}/_external/luasrcdiet/bin/luasrcdiet}
+    if [ ! -x ${LUASRCDIET} ]; then
+		echo "No LUASRCDIET (${LUASRCDIET}); bailing out!"
+		exit 1
+	fi
+
     if [ -n "${luafilefd:-}" ]; then exec {luafilefd}<&-; fi
     exec {luafilefd}<>${DF}
 
     echo "Lua diet ${LUADIET}" >&2
     lua5.1 \
-      -e 'package.path=package.path..";_external/luasrcdiet/?.lua"' \
-      ./_external/luasrcdiet/bin/luasrcdiet $1 -o ${DF} \
+      -e "package.path=package.path..';${TOPDIR}/_external/luasrcdiet/?.lua'" \
+      ${LUASRCDIET} $1 -o ${DF} \
       --quiet ${=LUADIET} 2>/dev/null
     rm ${DF}
     LUAFILE=/dev/fd/${luafilefd}
@@ -26,7 +34,7 @@ if [ -z "${MCUHOST:-}" ]; then
   dopushlua()     { luafile ${1} ; ${=PUSHCMD} -f ${LUAFILE} -t ${2:-`basename $1`}    ; }
   dopushcompile() { luafile ${1} ; ${=PUSHCMD} -f ${LUAFILE} -t ${2:-`basename $1`} -c ; }
 else
-  PUSHCMD="`dirname $0`/pushvia.expect ${MCUHOST} ${PORT:-23}"
+  PUSHCMD="${TOPDIR}/host/pushvia.expect ${MCUHOST} ${PORT:-23}"
   dopushtext()    {                ${=PUSHCMD} ${2:-`basename $1`} $1                 ; }
   dopushlua()     { luafile ${1} ; ${=PUSHCMD} ${2:-`basename $1`} ${LUAFILE}         ; }
   dopushcompile() { luafile ${1} ; ${=PUSHCMD} ${2:-`basename $1`} ${LUAFILE} compile ; }
