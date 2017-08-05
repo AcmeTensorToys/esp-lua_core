@@ -19,13 +19,6 @@ local function dosntp(server)
   )
 end
 
--- XXX deprecated in favor of new cron upstream module
-local function loopsntp(tq,period,server)
-  local function f() dosntp(server); tq:queue(period,f) end
-  tq:queue(period,f)
-end
-
 local self = {}
 self.dosntp = dosntp
-self.loopsntp = loopsntp
 return self

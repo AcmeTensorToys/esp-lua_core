@@ -1,4 +1,4 @@
-return function(tq, pin, addr, power, k)
+return function(pin, addr, power, k)
  local function doread()
   ow.reset(pin)
   ow.select(pin, addr)
@@ -16,5 +16,5 @@ return function(tq, pin, addr, power, k)
  ow.reset(pin)
  ow.select(pin, addr)
  ow.write(pin, 0x44, power)
- tq:queue(1000,doread)
+ tmr.create():alarm(1000,tmr.ALARM_SINGLE,doread)
 end

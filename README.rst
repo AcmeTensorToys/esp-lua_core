@@ -34,19 +34,6 @@ Generic Utilities
   <https://github.com/4refr0nt/luatool>`_ or via an existing telnet server
   with file overlay (see below).  See the readme in ``host/`` for more.
 
-Timer Queue
------------
-
-* ``tq/tq.lua`` -- a tickless event queue wrapping around a single nodemcu
-  timer.  Useful for managing complex lifecycles and/or many infrequent events.
-  Enqueue events with ``:queue(time,function,args...)``; ``:queue`` returns
-  a handle suitable for use with ``:dequeue()`` to unregister a pending
-  future event.  All ESP-specific behavior is overridable by replacing
-  ``:now`` and ``:arm``.  Use as ``tq = dofile("tq.lc")(timer)``.
-
-* ``tq/tq-diag.lua`` -- knows how to traverse a ``tq`` for diagnostic
-  utility.  Use as ``dofile("tq-diag.lc")(tq,print,print)``, e.g.
-
 
 Networking Utilities
 --------------------
@@ -95,9 +82,30 @@ cap1188 driver
   chip through a reset cycle.  See ``examples/lamp/init2.lua`` and
   ``examples/lamp/lamp-touch.lua`` for usage example.
 
-Completed Projects
-------------------
+Deprecated
+##########
 
-* ``examples/lamp`` -- a reimplementation of ``http://filimin.com/`` which
-  speaks MQTT and uses the CAP1188 chip above and Adafruit's WS2812 RGB
-  LEDs.
+Timer Queue
+-----------
+
+.. warning::
+
+   Now that nodemcu supports dynamic timers, this is much less interesting
+   unless you imagine having periods of very large numbers of events
+   pending, as each referenced dynamic timer holds a slot in the lua
+   registry, which never shrinks from its maximum occupancy.
+
+   This module is still used within several modules here, however, for the
+   moment.  Its removal and deprecation is being staged.
+
+* ``tq/tq.lua`` -- a tickless event queue wrapping around a single nodemcu
+  timer.  Useful for managing complex lifecycles and/or many infrequent events.
+  Enqueue events with ``:queue(time,function,args...)``; ``:queue`` returns
+  a handle suitable for use with ``:dequeue()`` to unregister a pending
+  future event.  All ESP-specific behavior is overridable by replacing
+  ``:now`` and ``:arm``.  Use as ``tq = dofile("tq.lc")(timer)``.
+
+* ``tq/tq-diag.lua`` -- knows how to traverse a ``tq`` for diagnostic
+  utility.  Use as ``dofile("tq-diag.lc")(tq,print,print)``, e.g.
+
+

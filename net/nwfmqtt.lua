@@ -40,7 +40,7 @@ end
 function self.heartbeat(m,topic,tq,period) -- set up lw&t and periodically heartbeat using tq until cancelled
   m:lwt(topic,"dead",1,1)
   local handle
-  local function beat() mqc:publish(topic,"beat",1,1); handle = tq:queue(period, beat) end
+  local function beat() m:publish(topic,"beat",1,1); handle = tq:queue(period, beat) end
   handle = tq:queue(period,beat)
   return function() tq:dequeue(handle) end
 end
