@@ -14,7 +14,7 @@ if file.open("nwfnet.conf","r") then
   local conf = sjson.decode(file.read() or "")
   if type(conf) == "table" then
     local essid = conf["sta_essid"]; local pw = conf["sta_pw"]
-    if essid ~= nil and pw ~= nil then wifi.sta.config(essid,pw,0) end
+    if essid ~= nil and pw ~= nil then wifi.sta.config({['ssid'] = essid, ['pwd'] = pw, save=true}) end
 
     if conf["ap"] ~= nil then pcall(wifi.ap.config,conf["ap"]) end
 
