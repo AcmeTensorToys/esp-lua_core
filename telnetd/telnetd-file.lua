@@ -12,6 +12,9 @@ return {
 , ["compile"] = function(ll,s) local fn = string.match(ll,"^%s*([^%s]+)%s*$");
     local r,err = pcall(node.compile,fn); if not r then s("ERR: "..err) end
   end
+, ["flashreload"] = function(ll,s) local fn = string.match(ll,"^%s*([^%s]+)%s*$");
+    local r,err = pcall(node.flashreload,fn); if not r then s("ERR: "..err) end
+  end
 , ["sha256"] = function(ll,s) -- compute the hash of a file in flash
     local fn = string.match(ll,"^%s*([^%s]+)%s*$")
     s(crypto.toBase64(crypto.fhash('sha256',fn)))

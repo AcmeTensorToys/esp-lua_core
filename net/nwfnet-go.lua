@@ -2,7 +2,7 @@
 wifi.eventmon.register(wifi.eventmon.STA_GOT_IP, function(t)
   (require "nwfnet"):runnet("wstagoip",t)
   if mdns then mdns.register(wifi.sta.gethostname()) end
-  dofile("nwfnet-sntp.lc").dosntp(nil)
+  OVL["nwfnet-sntp"]().dosntp(nil)
 end)
 wifi.eventmon.register(wifi.eventmon.STA_DHCP_TIMEOUT, function(_) (require "nwfnet"):runnet("wstadtmo") end)
 wifi.eventmon.register(wifi.eventmon.STA_CONNECTED, function(t) (require "nwfnet"):runnet("wstaconn",t) end)

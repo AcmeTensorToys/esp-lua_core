@@ -6,9 +6,9 @@ Introduction
 ############
 
 This is a collection of Lua modules I've used in various nodemcu/ESP8266
-projects.  It's largely an overlay-style approach to code residency; many
-things are intended to be ``dofile()``'d or ``loadfile()``'d and kept around
-only while being used.
+projects.  It's largely an overlay-style approach to code residency: most
+things are fetched through the ``OVL`` table created by ``init.lua`` rather
+than ``require``.
 
 The files here are available under the GNU Affero General Public License,
 version 3 or later.  See ``COPYING`` for details.
@@ -27,7 +27,7 @@ Generic Utilities
 
 * ``util/diag.lua`` -- a simple set of diagnostic calls intended for general
   calling from the command line.  A quick overview of the device.  Use as
-  ``dofile("diag.lc")``.
+  ``OVL.diag()``.
 
 * ``host/pushinit.sh`` -- a host-side utility to push a minimum set of files
   up to the device, either via `luatool
@@ -45,15 +45,15 @@ Networking Utilities
 Networking Framework
 --------------------
 
-* ``net/nwfnet.lua`` -- an event dispatch module; intended to be resident at
-  all times.
+* ``net/nwfnet.lua`` -- an event dispatch module; load with require so that
+  there is a singleton instance.
 
 * ``nwfnet-diag.lua`` -- generic event reporting using the above; intended
-  as diagnostics from console.  Use as ``dofile("nwfnet-diag.lc")(true)`` to
-  enable or ``...(false)`` to disable and unload.
+  as diagnostics from console.  Use as ``OVL["nwfnet-diag"]()(true)`` to
+  enable or ``...(false)`` to disable.
 
 * ``net/nwfnet-go.lua`` -- bring up the network and dispatch events via
-  ``nwfnet`` above.  Use via ``dofile``.
+  ``nwfnet`` above.  Use via ``OVL``.
 
 * ``net/netnet-sntp.lua`` -- utilities for invoking SNTP time
   synchronization once or repeatedly (using ``tq``, below).  Reads server
@@ -103,9 +103,9 @@ Timer Queue
   Enqueue events with ``:queue(time,function,args...)``; ``:queue`` returns
   a handle suitable for use with ``:dequeue()`` to unregister a pending
   future event.  All ESP-specific behavior is overridable by replacing
-  ``:now`` and ``:arm``.  Use as ``tq = dofile("tq.lc")(timer)``.
+  ``:now`` and ``:arm``.  Use as ``tq = OVL.tq()(timer)``.
 
 * ``tq/tq-diag.lua`` -- knows how to traverse a ``tq`` for diagnostic
-  utility.  Use as ``dofile("tq-diag.lc")(tq,print,print)``, e.g.
+  utility.  Use as ``OVL["tq-diag"]()(tq,print,print)``, e.g.
 
 

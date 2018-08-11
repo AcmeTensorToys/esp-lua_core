@@ -15,8 +15,8 @@ function self.rx(tx,input,k)
   self.tryin(input, self.commands,
     function(c,r)
       if c == "quit" then k(false) else
-       local rt = loadfile(string.format("telnetd-%s.lc",c))
-       if rt ~= nil
+       local rt = OVL["telnetd-"..c]
+       if type(rt) == 'function'
         then self.tryin(r,rt(),function(c2) tx(c.." "..c2.."?") end, function() tx(c.." ??") end,tx)
         else tx(c.."?")
        end
@@ -26,7 +26,7 @@ function self.rx(tx,input,k)
     function(_) tx("?") k(true) end,tx)
 end
 function self.server(sock_)
-  local fsend = (dofile("fifosock.lc"))((require "fifo")(), sock_)
+  local fsend = OVL.fifosock()(sock_)
   local function teardown(rawsock)
     rawsock:on("sent", nil)
     rawsock:on("receive", nil)

@@ -8,7 +8,7 @@ local FSMALLLIM = 32    -- maximum number of small strings held
 local concat = table.concat
 local insert = table.insert
 
-local fifo = (require "fifo")()
+local fifo = OVL.fifo()
 
 return function(sock)
   local ssend  = function(s) sock:send(s) end
