@@ -1,20 +1,16 @@
-fmk = dofile("util/fifo.lua")
+fmk = dofile("fifo/fifo.lua")
 tmk = dofile("tq/tq.lua")
-tdiag = loadfile("tq/tq-diag.lua")()
+tdiag = dofile("tq/tq-diag.lua")
 
 f = fmk()
 t = tmk()
 
 ttime    = 0
-tfirearm = nil
-t.arm = function(_,fire,when) tfirearm = fire; print("t arm: ", when) end
+t.arm = function(_,when) print("t arm: ", when) end
 t.now = function(_) return ttime end
 function tfire(step)
   ttime = ttime + step*1000
-  if tfirearm
-   then print("t fire"); tfa = tfirearm; tfirearm = nil; tfa()
-   else print("t fizzle")
-  end
+  print("t fire"); t:fire()
 end
 
 function tqp(w,s) t:queue(w,print,s) end
