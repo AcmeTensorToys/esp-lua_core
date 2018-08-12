@@ -77,6 +77,14 @@ local function bootPANIC()
   tmr.alarm(6,300000,tmr.ALARM_SINGLE,node.restart)
   goab()
 end
-local bct = { [0] = waitFLASH, [1] = bootPANIC, [2] = bootPANIC, [3] = bootPANIC, [4] = waitFLASH, [5] = goi2, [6] = waitFLASH }
+local bct = {
+  [0] = waitFLASH, -- power on
+  [1] = bootPANIC, -- hardware watchdog
+  [2] = bootPANIC, -- exception
+  [3] = bootPANIC, -- software watchdog
+  [4] = waitFLASH, -- software reset
+  [5] = goi2,      -- deep sleep
+  [6] = waitFLASH, -- external reset
+}
 local _, bc = node.bootreason()
 if bct[bc] then bct[bc]() else waitFLASH() end

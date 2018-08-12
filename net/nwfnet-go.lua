@@ -49,7 +49,10 @@ end
 if file.open("nwfnet.conf2","r") then
   local conf = sjson.decode(file.read() or "")
   if type(conf) == "table" then
-    if conf["verify"] == 1 then print("Enabling certificate verification"); pcall(net.cert.verify,true) end
+    if conf["verify"] == 1 then
+      print("Enabling certificate verification")
+      pcall(net.cert.verify,true)
+    end
    else print("nwfnet.conf2 malformed")
   end
 end

@@ -6,7 +6,13 @@
 -- Returns 'true' if the queue was not empty, 'false' otherwise.
 local function dequeue(q,k)
   if #q > 0
-   then local new = k(q[1]) ; if new == nil then table.remove(q,1) else q[1] = new end ; return true
+   then
+     local new = k(q[1])
+     if new == nil
+       then table.remove(q,1)
+       else q[1] = new
+     end
+     return true
    else q._go = true ; return false
   end
 end
