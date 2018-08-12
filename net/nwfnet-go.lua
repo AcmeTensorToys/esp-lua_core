@@ -8,24 +8,31 @@ wifi.eventmon.register(wifi.eventmon.STA_DHCP_TIMEOUT, function(_) (require "nwf
 wifi.eventmon.register(wifi.eventmon.STA_CONNECTED, function(t) (require "nwfnet"):runnet("wstaconn",t) end)
 wifi.eventmon.register(wifi.eventmon.STA_DISCONNECTED, function(t) (require "nwfnet"):runnet("wstadscn",t) end)
 
--- One-shot configuration options; useful to change many things at once
--- at the next boot; all of these options are persisted by the ESP
+-- Connection configuration options
+--
+-- While these things could be persisted by the ESP, it's probably simpler to
+-- keep them in a file instead.
 if file.open("nwfnet.conf","r") then
   local conf = sjson.decode(file.read() or "")
   if type(conf) == "table" then
-    local essid = conf["sta_essid"]; local pw = conf["sta_pw"]
-    if essid ~= nil and pw ~= nil then wifi.sta.config({['ssid'] = essid, ['pwd'] = pw, save=true}) end
-
-    if conf["ap"] ~= nil then pcall(wifi.ap.config,conf["ap"]) end
-
-    local modestr = conf["wifi_mode"]
-    if     modestr == "station"   then wifi.setmode(wifi.STATION)
-    elseif modestr == "softap"    then wifi.setmode(wifi.SOFTAP)
-    elseif modestr == "stationap" then wifi.setmode(wifi.STATIONAP)
-    else                               wifi.setmode(wifi.STATION)
+    local essid, pw = conf["sta_essid"], conf["sta_pw"]
+    if essid ~= nil and pw ~= nil then
+      wifi.sta.config({['ssid'] = essid, ['pwd'] = pw, save=false})
     end
 
-    if not conf["keepfile"] then file.remove("nwfnet.conf") end
+    if conf["ap"] ~= nil then pcall(wifi.ap.config,conf["ap"]) end
+    -- XXX Don't really support softap yet, so...
+    -- local ccok = false
+    -- if conf["cc"] ~= nil then ccok = pcall(wifi.setcountry,conf["cc"]) end
+
+    local modestr = conf["wifi_mode"]
+    if     modestr == "station"         then wifi.setmode(wifi.STATION)
+    -- XXX Don't really support softap yet, so...
+    -- elseif modestr == "softap" and ccok then wifi.setmode(wifi.SOFTAP)
+    elseif modestr == "stationap"       then wifi.setmode(wifi.STATIONAP)
+    else                                     wifi.setmode(wifi.STATION)
+    end
+
    else print("nwfnet.conf malformed")
   end
   file.close()
