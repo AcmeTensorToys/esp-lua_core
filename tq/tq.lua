@@ -70,7 +70,7 @@ local function dequeue(self,what)
   end end
 end
 local function defl_arm(self,t)
-  tmr.alarm(self.tmr, t, tmr.ALARM_SINGLE, function() self:fire() end)
+  self.tmr:alarm(t, tmr.ALARM_SINGLE, function() self:fire() end)
 end
 return function(tmrix) return {
   _q = {}, _tst = 0,

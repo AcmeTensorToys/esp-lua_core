@@ -43,4 +43,4 @@ Some useful commands
 Schedule a reboot of the node "soon"; we need to give the ESP stack enough
 time to write back the prompt, or we risk racing and panic-ing the stack::
 
-  diag exec tmr.alarm(tmr.create(), 1000, tmr.ALARM_SINGLE, node.restart)
+  diag exec tmr.create():alarm(1000, tmr.ALARM_SINGLE, node.restart)

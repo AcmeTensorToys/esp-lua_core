@@ -42,6 +42,9 @@ if rtctime then rtctime.set(0) end -- set time to 0 until someone corrects us
 local ie = OVL["init-early"]
 if ie then ie() end
 
+local gotmr = tmr.create()
+got = gotmr
+
 local function goab()
     OVL["nwfnet-diag"]()(true)
     OVL["diag"]()
@@ -50,7 +53,7 @@ local function goab()
     tcpserv:listen(23,function(k)
           local telnetd = OVL["telnetd"]()
           telnetd.on["conn"] = function(s)
-              tmr.unregister(6)
+              if gotmr then gotmr:stop() ; gotmr = nil end
               s(string.format("NODE-%06X RECOVERY (auto reboot cancelled)",node.chipid()))
           end
           telnetd.server(k)
@@ -62,19 +65,20 @@ local function goi2()
 end
 local function waitFLASH()
     local function stop_()
-      gpio.mode(3,gpio.INPUT); gpio.trig(3); tmr.unregister(6)
+      gpio.mode(3,gpio.INPUT); gpio.trig(3)
+      gotmr:stop(); got = nil; gotmr = nil
       stop = nil; go = nil
     end
     function stop() stop_(); goab() end
     function go() print("Continuing boot..."); stop_(); goi2() end
     print("Reset delay!  Bounce GPIO3 low or type 'stop()' to stop autoboot, or 'go()' to go...")
     gpio.mode(3,gpio.INT,gpio.PULLUP)
-    tmr.alarm(6,8000,tmr.ALARM_SINGLE,go)
+    gotmr:alarm(8000,tmr.ALARM_SINGLE,go)
     gpio.trig(3,"low",function(_) print("Aborting..."); stop() end)
 end
 local function bootPANIC()
-  print("Panic!  Lingering for a minute with telnet console up; 'tmr.unregister(6)' to persist...")
-  tmr.alarm(6,60000,tmr.ALARM_SINGLE,node.restart)
+  print("Panic!  Lingering for a minute with telnet console up; 'got:stop()' to persist...")
+  gotmr:alarm(60000,tmr.ALARM_SINGLE,node.restart)
   goab()
 end
 local bct = {
