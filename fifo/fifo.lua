@@ -1,15 +1,25 @@
--- Remove an element and pass it to k; if that returns a function, leave that
+-- Remove an element and pass it to k; if that returns a value, leave that
 -- pending at the top of the fifo.  Thus, we can get events that do multiple
--- things.  If the queue is empty, do not invoke k but flag it to enable
--- immediate execution at the next call to queue.
+-- things.
 --
--- Returns 'true' if the queue was not empty, 'false' otherwise.
+-- If k returns nil, the fifo will be advanced.  Moreover, k may return a
+-- second result, a boolean, which indicates whether or not this dequeue
+-- "counts" as one; this is useful for "phantom" elements in the fifo, such as
+-- (placeholders for) callbacks to observers, that cannot otherwise act as
+-- ordinary fifo elements do.
+--
+-- If the queue is empty, do not invoke k but flag it to enable immediate
+-- execution at the next call to queue.
+--
+-- Returns 'true' if the queue contained at least one non-phantom entry,
+-- 'false' otherwise.
 local function dequeue(q,k)
   if #q > 0
    then
-     local new = k(q[1])
+     local new, again = k(q[1])
      if new == nil
        then table.remove(q,1)
+            if again then return dequeue(q, k) end -- note tail call
        else q[1] = new
      end
      return true
@@ -23,7 +33,7 @@ end
 -- subsequent dequeues.
 local function queue(q,a,k)
   table.insert(q,a)
-  if k ~= nil and q._go then q._go = false; q:dequeue(k) end
+  if k ~= nil and q._go then q._go = false; dequeue(q, k) end
 end
 -- return a FIFO constructor
 return function()

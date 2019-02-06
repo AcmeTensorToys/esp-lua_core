@@ -11,7 +11,16 @@ local insert = table.insert
 local fifo = OVL.fifo()
 
 return function(sock)
-  local ssend  = function(s) sock:send(s) end
+  local ssend  = function(s)
+    ns = nil
+    if type(s) == "function" then s, ns = s() end
+    if s ~= nil then
+      sock:send(s)
+      return ns or nil, false
+    else
+      return nil, true
+    end
+  end
   local fsmall, lsmall, fbig = {}, 0, fifo()
 
   -- Move fsmall to fbig; might send if fbig empty
@@ -31,6 +40,11 @@ return function(sock)
   return function(s)
     -- don't sweat the petty things
     if s == nil or s == "" then return end
+
+    -- Our fifos can take functions; these can be useful for either lazy
+    -- generators or callbacks for parts of the stream having been sent.
+    -- Go ahead and queue this thing in the right place.
+    if type(s) == "function" then promote(); fbig:queue(s, ssend); return; end
 
     -- small fifo would overfill?  promote it
     if lsmall + #s > BIGTHRESH or #fsmall >= FSMALLLIM then promote() end

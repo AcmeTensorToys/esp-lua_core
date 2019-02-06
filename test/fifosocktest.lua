@@ -2,8 +2,9 @@ OVL={}
 OVL.fifo = function() return dofile("./fifo/fifo.lua") end
 package.loaded["fifosock"] = dofile("./net/fifosock.lua")
 
--- vprint = print
-vprint = function() end
+verbose = false
+
+vprint = verbose and print or function() end
 outs = {}
 
 fakesock = {
@@ -63,5 +64,35 @@ fcheck(string.rep("a",256))
 sent() ; fcheck(string.rep("b",256))
 sent() ; fcheck(string.rep("c",260))
 sent() ; fchecke()
+
+-- test a lazy generator
+local ix = 0
+local function gen() vprint("GEN", ix); ix = ix + 1; return ("a" .. ix), ix < 3 and gen end
+fsend(gen)
+fsend("b")
+fcheck("a1")
+sent() ; fcheck("a2")
+sent() ; fcheck("a3")
+sent() ; fcheck("b")
+sent() ; fchecke()
+
+-- test a completeion-like callback that does send text
+local ix = 0
+local function gen() vprint("GEN"); ix = 1; return "efgh", nil end
+fsend("abcd"); fsend(gen); fsend("ijkl")
+assert (ix == 0)
+         fcheck("abcd"); assert (ix == 0)
+sent() ; fcheck("efgh"); assert (ix == 1); ix = 0
+sent() ; fcheck("ijkl"); assert (ix == 0)
+sent() ; fchecke()
+
+-- and one that doesn't
+local ix = 0
+local function gen() vprint("GEN"); ix = 1; return nil, nil end
+fsend("abcd"); fsend(gen); fsend("ijkl")
+assert (ix == 0)
+         fcheck("abcd"); assert (ix == 0)
+sent() ; fcheck("ijkl"); assert (ix == 1); ix = 0
+sent() ; fchecke()     ; assert (ix == 0)
 
 print("All tests OK")
