@@ -8,6 +8,9 @@
 -- (placeholders for) callbacks to observers, that cannot otherwise act as
 -- ordinary fifo elements do.
 --
+-- k is also given a second argument, a boolean indicating that this is the
+-- last element in the queue.
+--
 -- If the queue is empty, do not invoke k but flag it to enable immediate
 -- execution at the next call to queue.
 --
@@ -16,7 +19,7 @@
 local function dequeue(q,k)
   if #q > 0
    then
-     local new, again = k(q[1])
+     local new, again = k(q[1], #q == 1)
      if new == nil
        then table.remove(q,1)
             if again then return dequeue(q, k) end -- note tail call
