@@ -34,6 +34,8 @@ sending a response, is passed in to the function so retrieved.
   * ``pread`` is the read dual of ``pwrite``; takes a length, an offset, and
     a file name, and returns a base64-encoded blob.  Be careful that length
     is reasonable, to minimize heap usage.
+  * ``sha256`` reports the ASCII-fied hex of the file given, useful for
+    verification of flash contents.
   * ``cert`` loads a file in its entirety and passes it to ``net.cert.verify``.
     Be careful, as this can use a lot of heap.
 
