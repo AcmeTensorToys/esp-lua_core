@@ -20,7 +20,13 @@ What's Here
 startup for user input or at a prompt with the network up and telnetd
 listening after a panic.  Spawns ``init2.lc`` for project-specific code.
 Note that ``init.lua`` tries very hard to have a minimal footprint in the
-non-panic path and registers no globals and leaves no callbacks registered.
+non-panic path.  It leaves a single global registered in the non-panic path,
+``OVL``, which is based on the LFS+SPIFFS loader example shipped with
+nodemcu.  ``OVL.foo`` or ``OVL["foo"]`` will attempt to fetch ``foo.lua`` or
+``foo.lc`` from SPIFFS and then ``foo`` from LFS; the rest of the modules
+here tend to reference each other that way.  (Unlike ``require``, each
+``OVL`` fetch is *a distinct object*, so some modules continue to use the
+former when they abuse shared state.)
 
 Generic Utilities
 -----------------
@@ -97,6 +103,9 @@ Timer Queue
 
    This module is still used within several modules here, however, for the
    moment.  Its removal and deprecation is being staged.
+
+   It will probably never go away because it has proven itself quite useful
+   in adapting other timer frameworks to emulate nodemcu's dynamic timers!
 
 * ``tq/tq.lua`` -- a tickless event queue wrapping around a single nodemcu
   timer.  Useful for managing complex lifecycles and/or many infrequent events.
