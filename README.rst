@@ -44,9 +44,9 @@ Generic Utilities
 Networking Utilities
 --------------------
 
-* ``util/fifosock.lua`` -- wraps around the nodemcu/ESP8266 socket sending
-  side to provide FIFO execution of ``:send`` calls.  Absent such a
-  facility, each ``:send`` is run asynchronously as its own task.
+* The ``fifosock`` module that used to be here has been merged into NodeMCU!
+  See ``lua_modules/fifo/fifosock.lua`` in its repository or perhaps skip to
+  https://nodemcu.readthedocs.io/en/dev/lua-modules/fifosock/ .
 
 Networking Framework
 --------------------

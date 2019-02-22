@@ -26,12 +26,13 @@ function self.rx(tx,input,k)
     function(_) tx("?") k(true) end,tx)
 end
 function self.server(sock_)
-  local fsend = OVL.fifosock()(sock_)
+  local fsend = (require "fifosock").wrap(sock_)
   local function teardown(rawsock)
     rawsock:on("sent", nil)
     rawsock:on("receive", nil)
     rawsock:on("disconnection", nil)
     tryon("disconn",fsend)
+    fsend=nil
   end
   sock_:on("receive",function(s_,input) self.rx(fsend,input,function(c) if c then fsend("\n$ ") else s_:close() teardown(s_) end end) end)
   sock_:on("disconnection",function(s_, x) teardown(s_) end)
