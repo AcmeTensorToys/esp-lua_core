@@ -34,7 +34,7 @@ function self.connect(m,cf) -- make a connection with parameters from json file 
   broker = broker or "iot.eclipse.org"
   port = port or 1883
   secure = (secure == 1) or 0
-  return m:connect(broker,port,secure,0)
+  return m:connect(broker,port,secure)
 end
 function self.suball(m,fn) -- subscribe to all lines in a file
   if file.open(fn) then
