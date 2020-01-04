@@ -1,9 +1,9 @@
 -- SOFT DEPENDS: file, rtcfifo, node, wifi
 local k,v
 if node then
-  print('INFO', 'hw') for k,v in ipairs(node.info('hw')) do print("", k, v) end
-  print('INFO', 'sw_version') for k,v in ipairs(node.info('sw_version')) do print("", k, v) end
-  print('INFO', 'build_config') for k,v in ipairs(node.info('build_config')) do print("", k, v) end
+  print('INFO', 'hw') for k,v in pairs(node.info('hw')) do print("", k, v) end
+  print('INFO', 'sw_version') for k,v in pairs(node.info('sw_version')) do print("", k, v) end
+  print('INFO', 'build_config') for k,v in pairs(node.info('build_config')) do print("", k, v) end
   print('HEAP', node.heap())
 end
 if wifi then
