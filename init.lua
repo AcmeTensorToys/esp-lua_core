@@ -77,8 +77,9 @@ local function waitFLASH()
     gpio.trig(3,"low",function(_) print("Aborting..."); stop() end)
 end
 local function bootPANIC()
-  print("Panic!  Lingering for a minute with telnet console up; 'got:stop()' to persist...")
+  print("Panic!  Lingering for a minute with telnet console up; 'stop()' to persist...")
   gotmr:alarm(60000,tmr.ALARM_SINGLE,node.restart)
+  function stop() gotmr:stop() end
   goab()
 end
 local bct = {
