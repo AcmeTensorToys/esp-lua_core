@@ -9,7 +9,6 @@ set -e -u
 }
 
 dopushcompile firm/lua_modules/fifo/fifo.lua
-dopushcompile firm/lua_modules/fifo/fifosock.lua
 
 dopushcompile util/diag.lua
 dopushcompile tq/tq.lua
