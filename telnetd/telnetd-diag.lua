@@ -7,8 +7,8 @@ return {
 	-- restart in some ticks, so that network callbacks have a chance to fire
 	-- first, or else we might crash.  Ick!
   --
-  -- Apparently we need "some" because the fifosock sometimes takes one to do its uncorking
-  -- and the network stack is its own monstrosity.  Either way, probably fine.
+  -- Apparently we need "some" because the pipe and socket sometimes take one to do its
+  -- uncorking and the network stack is its own monstrosity.  Either way, probably fine.
   ["restart"] = function(_,s) tmr.create():alarm(10, tmr.ALARM_SINGLE, node.restart) end,
   ["exec"] = function(l,s)
 	local f, err = loadstring(l)
