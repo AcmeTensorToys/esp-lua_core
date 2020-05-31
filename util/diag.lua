@@ -1,33 +1,48 @@
 -- SOFT DEPENDS: file, rtcfifo, node, wifi
 local k,v
 if node then
-  print('INFO', 'hw') for k,v in pairs(node.info('hw')) do print("", k, v) end
-  print('INFO', 'sw_version') for k,v in pairs(node.info('sw_version')) do print("", k, v) end
-  print('INFO', 'build_config') for k,v in pairs(node.info('build_config')) do print("", k, v) end
+  local function info(t) print('INFO', t) for k,v in pairs(node.info(t)) do print("", k, v) end end
+  info('hw')
+  info('sw_version')
+  info('build_config')
   print('HEAP', node.heap())
 end
 if wifi then
-  print('WIFI',wifi.getmode())
-  print('MAC',wifi.sta.getmac(), wifi.ap.getmac())
+  print('WIFI',wifi.getmode(),wifi.sta.getmac(), wifi.ap.getmac())
   print('HOST',wifi.sta.gethostname())
-  print('WSTA',wifi.sta.getconfig())
   print('WAP',wifi.ap.getconfig())
+  print('WSTA',wifi.sta.getconfig())
+  do
+    local x=wifi.sta.getapinfo()
+    local y=wifi.sta.getapindex()
+    for i=1,x.qty do
+      print(string.format("\t%s%-6d %-32s %-64s %-18s",
+        i == y and "*" or " ", i,
+        x[i].ssid, x[i].pwd or "-", x[i].bssid or "-"))
+    end
+  end
   print('IP',wifi.sta.getip(), wifi.ap.getip())
 end
 if rtcfifo then
-  if rtcfifo.ready() ~= 0 then print('RTCF',rtcfifo.count()) else print('RTCF','NOT PREPARED') end
+  print('RTCF', rtcfifo.ready() ~= 0 and rtcfifo.count() or "NOT PREPARED")
 end
 if file then
-  print('FS', file.fsinfo()); for k,v in pairs(file.list()) do print("",k,v) end
+  print('FS', ("rem=%d used=%d sz=%d"):format(file.fsinfo()))
+    for k,v in pairs(file.list()) do print("",k,v) end
 end
-if node.flashindex then
+if node and node.flashindex then
  local ut, fa, ma, sz, t = node.flashindex()
- if ut then
-   print('LFS', ut, fa, ma, sz)
-   for k,v in ipairs(t) do print("", v) end
+ if fa and ma then
+   print('LFSM',("flashaddr=0x%x mapaddr=0x%x"):format(fa, ma))
  else
-   print('LFS', fa, ma)
+   print('LFSM',"No data")
+ end
+ if ut then
+   print('LFS', ("unixtime=%d sz=%d"):format(ut, sz))
+     for k,v in ipairs(t) do print("", v) end
  end
 end
-print('PACKAGES'); for k,v in pairs(package.loaded) do print("",k,v) end
-print('GLOBAL'); for k,v in pairs(_G) do print("",k,v) end
+print('PACKAGES')
+  for k,v in pairs(package.loaded) do print("",k,v) end
+print('GLOBAL')
+  for k,v in pairs(_G) do print("",k,v) end
