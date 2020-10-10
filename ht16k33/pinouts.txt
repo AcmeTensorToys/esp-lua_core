@@ -1,0 +1,32 @@
+Adafruit 8x16 Feather
+=====================
+
+::
+
+               [          12 pin header            ]
+          ROW0 ROW2 ... ROW14 || ROW1 ROW3 ... ROW15
+    COM7
+    ...
+    COM0
+          [             16 pin header              ]
+
+SparkFun Qwiic Alphanumeric
+===========================
+
+The COLON is at ROW8 COM0 and the DOT is at ROW8 COM1.  There is nothing else
+on ROW8.
+
+Each individual digit, rendered in ASCII ART and with letters stolen from the
+manufacturer's datasheet, looks like this::
+
+                    * Digits each occupy two ROWs, always 4 apart.
+      AAAAAAA   
+    FH   J   KB     * Digits left to right are on ROW0(4) through ROW3(7).
+    F H  J  K B 
+    F  H J K  B     * Within each digit, segments are assigned to their COMs
+      G1   G2         as follows:
+    E  N M L  C 
+    E N  M  L C           A  B  C  D  E  F  G1 G2 H  J  K  L  M  N
+    EN   M   LC       COM 0  1  2  3  4  5  6  0  1  2  3  4  5  6
+      DDDDDDD         ROW 0  0  0  0  0  0  0  4  4  4  4  4  4  4
+
