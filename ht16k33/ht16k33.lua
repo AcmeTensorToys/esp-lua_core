@@ -2,25 +2,9 @@
 
 local M = {}
 
-local function tx(self, ...)
-  local i2c, bus, addr = i2c, self.bus, self.addr
-  i2c.start(bus)
-  i2c.address(bus, addr, i2c.TRANSMITTER) 
-  i2c.write(bus, ...)
-  i2c.stop(bus)
-end
-
-local function txrx(self, w, rn)
-  local i2c, bus, addr = i2c, self.bus, self.addr
-  i2c.start(bus)
-  i2c.address(bus, addr, i2c.TRANSMITTER) 
-  i2c.write(bus, w)
-  i2c.start(bus)
-  i2c.address(bus, addr, i2c.TRANSMITTER) 
-  local ret = i2c.read(rn)
-  i2c.stop(bus)
-  return ret
-end
+local i2cu = require "i2cu"
+local function tx  (self, ...)   return i2cu.writen(self.bus, self.addr, ...  ) end
+local function txrx(self, w, rn) return i2cu.wr    (self.bus, self.addr, rn, w) end
 
 -- control the primary oscillator
 local function osc(self,on)

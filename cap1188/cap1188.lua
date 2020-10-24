@@ -1,27 +1,19 @@
--- DEPENDS: i2c
+-- DEPENDS: i2c, i2cu
 -- cap1188 based heavily on adafruit's documentation and code as well as the
 -- device datasheet.  Unsurprising, really, esp. that it's their breakout.
 local self = {}
+self.bus = 0
 self.addr = 0x29
 
+local i2cu = require "i2cu"
+
 function self:rr(r)
-  i2c.start(0)
-  if not i2c.address(0, self.addr, i2c.TRANSMITTER) then i2c.stop(0) return nil end
-   i2c.write(0,r)
-  i2c.start(0)
-   i2c.address(0,0x29,i2c.RECEIVER)
-   local x = i2c.read(0,1)
-  i2c.stop(0)
+  local x = i2cu.wr(self.bus, self.addr, 1, r)
   return x:byte(1)
 end
 
 function self:wr(r,v)
-  i2c.start(0)
-  if not i2c.address(0, self.addr, i2c.TRANSMITTER) then i2c.stop(0) return nil end
-  i2c.write(0,r)
-  i2c.write(0,v)
-  i2c.stop(0)
-  return true
+  return i2cu.writen(self.bus, self.addr, r, v)
 end
 
 function self:mr(r,f) local n = f(self:rr(r)) ; self:wr(r,n); return n end
