@@ -14,7 +14,7 @@ if file.open("nwfnet.cert","r") then
   local cert = ""
   local chunk = file.read()
   while chunk ~= nil do cert = cert..chunk; chunk = file.read() end
-  ok, res = pcall(net.cert.verify,cert)
+  ok, res = pcall(tls.cert.verify,cert)
   file.close()
   if ok then
     print("Loaded cert from nwfnet.cert, which will now be removed.")
@@ -55,7 +55,7 @@ if file.open("nwfnet.conf","r") then
     end
 
     if conf["tls_verify"] == 1 then
-      pcall(net.cert.verify,true)
+      pcall(tls.cert.verify,true)
     end
 
    else print("nwfnet.conf malformed")

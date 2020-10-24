@@ -4,18 +4,15 @@
 -- that, unlike require, doesn't cause them to "stick" in RAM.
 --
 -- Based on lua_examples/lfs/_init.lua
-local G=getfenv()
-local flashindex = node.flashindex
+local G=_ENV or getfenv()
+local flashindex = (node.LFS and node.LFS.get) or node.flashindex
 local ovl_t = {
   __index = function(_, name)
       local f = loadfile(name..".lua")
       if f then return f end
       local f = loadfile(name..".lc")
       if f then return f end
-      if flashindex then
-        local fn_ut, ba, ma, size, modules = flashindex(name)
-        if not ba then return fn_ut end
-      end
+      if flashindex then return flashindex(name) end
       return nil
     end,
   __newindex = function(_, name, value)
@@ -25,22 +22,16 @@ local ovl_t = {
 G.OVL = setmetatable(ovl_t,ovl_t)
 
 -- Install LFS as a package loader, as suggested by lua_examples/lfs/_init.lua
-if flashindex then
-  table.insert(package.loaders,function(module)
-    local fn, ba = flashindex(module)
-    return ba and "Module not in LFS" or fn
-  end)
-end
+if flashindex then table.insert(package.loaders,flashindex) end
 
 -- Save some bytes, as suggested by lua_examples/lfs/_init.lua
-G.module       = nil
 package.seeall = nil
 
 if rtctime then rtctime.set(0) end -- set time to 0 until someone corrects us
 
 -- See if there's any early startup to do.
 local ie = OVL["init-early"]
-if ie then ie() end
+if ie then pcall(ie) end
 
 local gotmr = tmr.create()
 got = gotmr
