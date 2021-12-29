@@ -1,20 +1,20 @@
 Adafruit 8x16 Feather
 =====================
 
-::
+Odd bytes on the "left" display, even bytes on the "right", with the 16-pin
+header "down".  LSB on the bottom.  Graphically::
 
-               [          12 pin header            ]
-          ROW0 ROW2 ... ROW14 || ROW1 ROW3 ... ROW15
-    COM7
-    ...
-    COM0
-          [             16 pin header              ]
+               [          12 pin header           ]
+          C0R07 ... ... C7R07 | C0R15 ... ... C7R15
+           ...           ...  |  ...           ...
+          C0R00 ... ... C7R00 | C0R08 ... ... C7R08
+          [             16 pin header             ]
 
 SparkFun Qwiic Alphanumeric
 ===========================
 
 The COLON is at ROW8 COM0 and the DOT is at ROW8 COM1.  There is nothing else
-on ROW8.
+on ROW8 or any higher rows.
 
 Each individual digit, rendered in ASCII ART and with letters stolen from the
 manufacturer's datasheet, looks like this::
@@ -30,3 +30,28 @@ manufacturer's datasheet, looks like this::
     EN   M   LC       COM 0  1  2  3  4  5  6  0  1  2  3  4  5  6
       DDDDDDD         ROW 0  0  0  0  0  0  0  4  4  4  4  4  4  4
 
+In a ht16k33-memory-centric view...
+
++------+----------------+----------------+
+| Byte | Segments (LSN) | Segments (MSN) |
++------+----------------+----------------+
+|    0 |              A |             G2 |
++------+----------------+----------------+
+|    1 |          Colon |    _unused_    |
++------+----------------+----------------+
+|    2 |              B |              H |
++------+----------------+----------------+
+|    3 |            Dot |    _unused_    |
++------+----------------+----------------+
+|    4 |              C |              J |
++------+----------------+----------------+
+|    6 |              D |              K |
++------+----------------+----------------+
+|    8 |              E |              L |
++------+----------------+----------------+
+|   10 |              F |              M |
++------+----------------+----------------+
+|   12 |             G1 |              N |
++------+----------------+----------------+
+
+Other than 1 and 3, all odd bytes (ROW8 - ROW15) are unused.
