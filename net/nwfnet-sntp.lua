@@ -6,11 +6,13 @@ local function dosntp(server)
     -- new world order?
     nwo.go((require "nwfnet").sntp, nil,
       function(res, serv, self)
-	local sec, usec = nil, nil -- rtctime.get()
-        (require"nwfnet"):runnet("sntpsync",sec,usec,serv)
+	local sec, usec = rtctime.get()
+	local nn = require"nwfnet" -- XXX why must this be broken out?
+	nn:runnet("sntpsync",sec,usec,serv)
       end,
       function(err, srv, rply)
-	if err == "all" then (require"nwfnet"):runnet("sntperr","No SNTP available") end
+	local nn = require"nwfnet"
+	if err == "all" then nn:runnet("sntperr","No SNTP available") end
       end)
   elseif sntp then
     -- old world order
