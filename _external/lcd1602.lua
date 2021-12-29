@@ -50,7 +50,7 @@ end
 
 -- return command to set cursor at row/col
 local locate = function(self, row, col)
-  return col + _offsets[row]
+  return math.floor(col + _offsets[row])
 end
 
 -- define custom char 0-7
