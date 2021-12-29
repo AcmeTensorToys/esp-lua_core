@@ -30,16 +30,14 @@ if file then
   print('FS', ("rem=%d used=%d sz=%d"):format(file.fsinfo()))
     for k,v in pairs(file.list()) do print("",k,v) end
 end
-if node and node.flashindex then
- local ut, fa, ma, sz, t = node.flashindex()
- if fa and ma then
-   print('LFSM',("flashaddr=0x%x mapaddr=0x%x"):format(fa, ma))
+if node then
+ local i = node.info('lfs')
+ if ba then
+   print('LFS',("baseaddr=0x%x sz=0x%x used=0x%x mapaddr=0x%x"):
+     format(i.lfs_base, i.lfs_size, i.lfs_used, i.lfs_mapped))
+   for k,v in ipairs(t) do print("", v) end
  else
-   print('LFSM',"No data")
- end
- if ut then
-   print('LFS', ("unixtime=%d sz=%d"):format(ut, sz))
-     for k,v in ipairs(t) do print("", v) end
+   print('LFS',"Not installed")
  end
 end
 print('PACKAGES')
